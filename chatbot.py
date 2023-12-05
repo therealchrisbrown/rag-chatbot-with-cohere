@@ -12,20 +12,6 @@ from unstructured.chunking.title import chunk_by_title
 
 co = cohere.Client(os.environ["COHERE_API_KEY"])
 
-sources = [
-    {
-        "title": "Text Embeddings", 
-        "url": "https://docs.cohere.com/docs/text-embeddings"},
-    {
-        "title": "Similarity Between Words and Sentences", 
-        "url": "https://docs.cohere.com/docs/similarity-between-words-and-sentences"},
-    {
-        "title": "The Attention Mechanism", 
-        "url": "https://docs.cohere.com/docs/the-attention-mechanism"},
-    {
-        "title": "Transformer Models", 
-        "url": "https://docs.cohere.com/docs/transformer-models"}   
-]
 
 class Documents:
 
