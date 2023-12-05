@@ -1,4 +1,5 @@
 import streamlit as st
+import time
 from chatbot import Chatbot
 from chatbot import Documents
 
@@ -35,23 +36,31 @@ class App:
             #Typing "quit" ends the conversation
             if user_input.lower() == "quit":
                 st.write("Ending chat.")
-            else:
-                st.text(f"User: {user_input}")
-                        
+            else:        
                 #Get response
                 response = self.chatbot.generate_response(user_input)
-                        
-                st.write("Chatbot: ")
+                st.markdown(f"**User:** {user_input}")
+
+                chatbot_response = ""
+                citations = ""
+                
                 for event in response:
-                    # Text
                     if event.event_type == "text-generation":
-                        st.write(event.text)
+                        chatbot_response += f"{event.text} "
 
                     # Citations
                     if event.event_type == "citation-generation":
-                        st.write("\n\nCITATIONS:")
-                        st.write(event.citations)
-                st.write(f"\n{'-'*100}\n")
+                        citations += f"{event.citations}\n"
+                        #st.markdown("<hr>", unsafe_allow_html=True)
+                        #st.markdown("**CITATIONS:**", unsafe_allow_html=True)
+                        #st.markdown(event.citations, unsafe_allow_html=True)
+                # Display chatbot response as a coherent paragraph
+                st.markdown(f"**Chatbot:** {chatbot_response}")
+
+                # Display citations
+                if citations:
+                    st.markdown(f"**Citations:**\n{citations}")
+
 
 if __name__ == "__main__":
     # Assuming Chatbot class has a generate_response method
