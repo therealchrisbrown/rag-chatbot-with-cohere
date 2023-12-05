@@ -33,7 +33,7 @@ class App:
         typed_text = ""
         for word in words:
             typed_text += word + " "
-            container.markdown(typed_text)
+            container.markdown(f"**Answer:** {typed_text}")
             time.sleep(delay)
         container.text("")  # Add a newline after the text
 
@@ -50,8 +50,10 @@ class App:
                 # Display user input
                 st.markdown(f"**User:** {user_input}")
 
+                relevant_docs = self.documents.retrieve(user_input)
                 #relevant_docs = self.documents.retrieve(user_input)
-                response = self.chatbot.generate_response(user_input)
+                response = self.chatbot.generate_response(relevant_docs[0]["text"])[0].text
+                self.simulate_typing(response)
 
                 # Display chatbot response with a typing effect
                 # chatbot_response_placeholder = st.empty()
@@ -63,11 +65,11 @@ class App:
                 #     st.text(f"")  # Add a newline after the text
 
                 
-                for event in response:
-                    if event.event_type == "text-generation":
-                        self.simulate_typing(event.text)
-                    elif event.event_type == "citation-generation":
-                        pass
+                # for event in response:
+                #     if event.event_type == "text-generation":
+                #         self.simulate_typing(event.text)
+                #     elif event.event_type == "citation-generation":
+                #         pass
                 st.text("")
                         #chatbot_response += f"{event.text} "
 
