@@ -50,24 +50,26 @@ class App:
                 # Display user input
                 st.markdown(f"**User:** {user_input}")
 
-                relevant_docs = self.documents.retrieve(user_input)
-
+                #relevant_docs = self.documents.retrieve(user_input)
+                response = self.chatbot.generate_response(user_input)
 
                 # Display chatbot response with a typing effect
-                chatbot_response_placeholder = st.empty()
-                for doc in relevant_docs:
-                    st.markdown(f"**Title:** {doc['title']}")
-                    st.markdown(f"**URL:** [{doc['title']}]({doc['url']})")
-                    self.simulate_typing(doc["text"])
-                    st.markdown(f"**Answer:** {doc['text']}")
-                    st.text(f"")  # Add a newline after the text
+                # chatbot_response_placeholder = st.empty()
+                # for doc in relevant_docs:
+                #     st.markdown(f"**Title:** {doc['title']}")
+                #     st.markdown(f"**URL:** [{doc['title']}]({doc['url']})")
+                #     self.simulate_typing(doc["text"])
+                #     st.markdown(f"**Answer:** {doc['text']}")
+                #     st.text(f"")  # Add a newline after the text
 
                 
-                # for event in response:
-                #     if event.event_type == "text-generation":
-                #         self.simulate_typing(event.text)
-                #         st.text("")  # Add a newline after the text
-                #         #chatbot_response += f"{event.text} "
+                for event in response:
+                    if event.event_type == "text-generation":
+                        self.simulate_typing(event.text)
+                    elif event.event_type == "citation-generation":
+                        pass
+                st.text("")
+                        #chatbot_response += f"{event.text} "
 
                 #     # Citations
                 #     if event.event_type == "citation-generation":
