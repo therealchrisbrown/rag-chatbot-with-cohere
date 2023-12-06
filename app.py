@@ -1,5 +1,3 @@
-import streamlit as st
-import time
 from chatbot import Chatbot
 from chatbot import Documents
 
@@ -20,79 +18,56 @@ sources = [
 
 
 class App:
-    def __init__(self, documents: Documents, chatbot: Chatbot):
-        self.documents = documents
+    def __init__(self, chatbot: Chatbot):
+        """
+        Initializes an instance of the App class.
+
+        Parameters:
+        chatbot (Chatbot): An instance of the Chatbot class.
+
+        """
         self.chatbot = chatbot
-
-    def simulate_typing(self, text, delay=0.05):
-        """
-        Simulate a typing effect by displaying characters with a delay.
-        """
-        container = st.empty()
-        words = text.split()
-        typed_text = ""
-        for word in words:
-            typed_text += word + " "
-            container.markdown(f"**Answer:** {typed_text}")
-            time.sleep(delay)
-        container.text("")  # Add a newline after the text
-
-
+    
     def run(self):
-        st.title("RAG-Chatbot Application")
-        user_input = st.text_input("User", "")
+        """
+        Runs the chatbot application.
 
-        if st.button("Submit"):
-            #Typing "quit" ends the conversation
-            if user_input.lower() == "quit":
-                st.write("Ending chat.")
-            else:        
-                # Display user input
-                st.markdown(f"**User:** {user_input}")
+        """
+        while True:
+            # Get the user message
+            message = input("User: ")
 
-                relevant_docs = self.documents.retrieve(user_input)
-                #relevant_docs = self.documents.retrieve(user_input)
-                response = self.chatbot.generate_response(relevant_docs[0]["text"])[0].text
-                self.simulate_typing(response)
+            # Typing "quit" ends the conversation
+            if message.lower() == "quit":
+                print("Ending chat.")
+                break
+            else:
+                print(f"User: {message}")
 
-                # Display chatbot response with a typing effect
-                # chatbot_response_placeholder = st.empty()
-                # for doc in relevant_docs:
-                #     st.markdown(f"**Title:** {doc['title']}")
-                #     st.markdown(f"**URL:** [{doc['title']}]({doc['url']})")
-                #     self.simulate_typing(doc["text"])
-                #     st.markdown(f"**Answer:** {doc['text']}")
-                #     st.text(f"")  # Add a newline after the text
+            # Get the chatbot response
+            response = self.chatbot.generate_response(message)
 
-                
-                # for event in response:
-                #     if event.event_type == "text-generation":
-                #         self.simulate_typing(event.text)
-                #     elif event.event_type == "citation-generation":
-                #         pass
-                st.text("")
-                        #chatbot_response += f"{event.text} "
+            # Print the chatbot response
+            print("Chatbot:")
+            flag = False
+            for event in response:
+                # Text
+                if event.event_type == "text-generation":
+                    print(event.text, end="")
 
-                #     # Citations
-                #     if event.event_type == "citation-generation":
-                #         self.simulate_typing(event.citations)
-                #         st.text("")  # Add a newline after the citations
-                #         #citations += f"{event.citations}\n"
-                #         #st.markdown("<hr>", unsafe_allow_html=True)
-                #         #st.markdown("**CITATIONS:**", unsafe_allow_html=True)
-                #         #st.markdown(event.citations, unsafe_allow_html=True)
-                # # Display chatbot response as a coherent paragraph
-                # #st.markdown(f"**Chatbot:** {chatbot_response}")
+                # Citations
+                if event.event_type == "citation-generation":
+                    if not flag:
+                        print("\n\nCITATIONS:")
+                        flag = True
+                    print(event.citations)
 
-                # # Display citations
-                # #if citations:
-                # #    st.markdown(f"**Citations:**\n{citations}")
-                # chatbot_response_placeholder.text("")  # Clear the placeholder at the end
+            print(f"\n{'-'*100}\n")
 
 
 if __name__ == "__main__":
     # Assuming Chatbot class has a generate_response method
     documents = Documents(sources)
     chatbot = Chatbot(documents)
-    app = App(documents, chatbot)
+    app = App(chatbot)
     app.run()
