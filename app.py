@@ -7,6 +7,7 @@ load_dotenv()
 from chatbot import Chatbot
 from chatbot import Documents
 
+import streamlit as st
 
 # Define sources
 sources = [
