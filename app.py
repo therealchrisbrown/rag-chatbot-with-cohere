@@ -25,7 +25,7 @@ sources = [
         "url": "https://docs.cohere.com/docs/transformer-models"}   
 ]
 
-class App:
+class StreamlitApp:
     def __init__(self, chatbot: Chatbot):
         """
         Initializes an instance of the App class.
@@ -38,43 +38,45 @@ class App:
     
     def run(self):
         """
-        Runs the chatbot application.
+        Runs the chatbot application using Streamlit
 
         """
+        st.title("RAG Chatbot App")
+
         while True:
             # Get the user message
-            message = input("User: ")
+            message = st.text_input("Enter some text 👇", key="userinput")
 
             # Typing "quit" ends the conversation
             if message.lower() == "quit":
-                print("Ending chat.")
+                st.text("Ending chat.")
                 break
             else:
-                print(f"User: {message}")
+                st.text(f"User: {message}")
 
             # Get the chatbot response
             response = self.chatbot.generate_response(message)
 
             # Print the chatbot response
-            print("Chatbot:")
+            st.text("Chatbot:")
             flag = False
             for event in response:
                 # Text
                 if event.event_type == "text-generation":
-                    print(event.text, end="")
+                    st.markdown(event.text)
 
                 # Citations
                 if event.event_type == "citation-generation":
                     if not flag:
-                        print("\n\nCITATIONS:")
+                        st.text("\n\nCITATIONS:")
                         flag = True
                     print(event.citations)
 
-            print(f"\n{'-'*100}\n")
+            st.text(f"\n{'-'*100}\n")
 
 if __name__ == "__main__":
     # Assuming Chatbot class has a generate_response method
     documents = Documents(sources)
     chatbot = Chatbot(documents)
-    app = App(chatbot)
+    app = StreamlitApp(chatbot)
     app.run()
